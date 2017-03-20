@@ -77,6 +77,8 @@ type GzipResponseWriter struct {
 
 	code int // Saves the WriteHeader value.
 
+	clientAcceptEncoding []string // Holds the client header of Accept-Encoding.
+
 	minSize      int    // Specifed the minimum response size to gzip. Only the first Write call is checked.
 	buff         []byte // Holds the first part of the write before the reaching the minSize or the end of the write.
 	bytesWritten int    // Keep trace of the numbers of bytes written.
@@ -252,6 +254,9 @@ func NewGzipLevelAndMinSize(level, askedMinSize int) (func(http.Handler) http.Ha
 					ResponseWriter: w,
 					index:          index,
 					minSize:        askedMinSize,
+
+					// Save what encodding client accept.
+					clientAcceptEncoding: r.Header[acceptEncoding],
 
 					buff: []byte{},
 				}
